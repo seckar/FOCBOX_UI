@@ -19,7 +19,6 @@
 
 #include "bleuart.h"
 
-
 #include <QDebug>
 #include <QLowEnergyConnectionParameters>
 
