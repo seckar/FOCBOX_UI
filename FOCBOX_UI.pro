@@ -37,7 +37,7 @@ QT       += charts qml
 
 #QT       += positioning
 
-#DEFINES += HAS_SERIALPORT
+DEFINES += HAS_SERIALPORT
 contains(DEFINES, HAS_SERIALPORT) {
     QT       += serialport
 }
