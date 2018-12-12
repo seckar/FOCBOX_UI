@@ -1,20 +1,20 @@
 /*
     Copyright 2016 - 2017 Benjamin Vedder	benjamin@vedder.se
 
-    This file is part of VESC Tool.
+    
 
-    VESC Tool is free software: you can redistribute it and/or modify
+    This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    VESC Tool is distributed in the hope that it will be useful,
+    This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program .  If not, see <http://www.gnu.org/licenses/>.
     */
 
 #include "commands.h"
@@ -126,20 +126,29 @@ void Commands::processPacket(QByteArray data)
         mTimeoutValues = 0;
         MC_VALUES values;
         values.temp_mos = vb.vbPopFrontDouble16(1e1);
+        values.temp_mos2 = vb.vbPopFrontDouble16(1e1);
         values.temp_motor = vb.vbPopFrontDouble16(1e1);
+        values.temp_motor2 = vb.vbPopFrontDouble16(1e1);
         values.current_motor = vb.vbPopFrontDouble32(1e2);
+        values.current_motor2 = vb.vbPopFrontDouble32(1e2);
         values.current_in = vb.vbPopFrontDouble32(1e2);
         values.id = vb.vbPopFrontDouble32(1e2);
+        values.id2 = vb.vbPopFrontDouble32(1e2);
         values.iq = vb.vbPopFrontDouble32(1e2);
+        values.iq2 = vb.vbPopFrontDouble32(1e2);
         values.duty_now = vb.vbPopFrontDouble16(1e3);
+        values.duty_now2 = vb.vbPopFrontDouble16(1e3);
         values.rpm = vb.vbPopFrontDouble32(1e0);
+        values.rpm2 = vb.vbPopFrontDouble32(1e0);
         values.v_in = vb.vbPopFrontDouble16(1e1);
         values.amp_hours = vb.vbPopFrontDouble32(1e4);
         values.amp_hours_charged = vb.vbPopFrontDouble32(1e4);
         values.watt_hours = vb.vbPopFrontDouble32(1e4);
         values.watt_hours_charged = vb.vbPopFrontDouble32(1e4);
         values.tachometer = vb.vbPopFrontInt32();
+        values.tachometer2 = vb.vbPopFrontInt32();
         values.tachometer_abs = vb.vbPopFrontInt32();
+        values.tachometer_abs2 = vb.vbPopFrontInt32();
         values.fault_code = (mc_fault_code)vb.vbPopFrontInt8();
         values.fault_str = faultToStr(values.fault_code);
 
@@ -147,12 +156,6 @@ void Commands::processPacket(QByteArray data)
             values.position = vb.vbPopFrontDouble32(1e6);
         } else {
             values.position = -1.0;
-        }
-
-        if (vb.size() >= 1) {
-            values.vesc_id = vb.vbPopFrontUint8();
-        } else {
-            values.vesc_id = 255;
         }
 
         emit valuesReceived(values);
@@ -214,12 +217,18 @@ void Commands::processPacket(QByteArray data)
 
     case COMM_DETECT_MOTOR_R_L: {
         double r = vb.vbPopFrontDouble32(1e6);
-        double l = vb.vbPopFrontDouble32(1e3);
-        emit motorRLReceived(r, l);
+        double l = vb.vbPopFrontDouble32(1e3);        
+        double r2 = vb.vbPopFrontDouble32(1e6);
+        double l2 = vb.vbPopFrontDouble32(1e3);
+        emit motorRLReceived(r, l,r2,l2);
     } break;
 
     case COMM_DETECT_MOTOR_FLUX_LINKAGE: {
-        emit motorLinkageReceived(vb.vbPopFrontDouble32(1e7));
+        double lam1 = vb.vbPopFrontDouble32(1e7);
+        double lam2 = vb.vbPopFrontDouble32(1e7);
+        bool dir1 = vb.vbPopFrontInt8();
+        bool dir2 = vb.vbPopFrontInt8();
+        emit motorLinkageReceived(lam1,lam2,dir1,dir2);
     } break;
 
     case COMM_DETECT_ENCODER: {
@@ -231,7 +240,7 @@ void Commands::processPacket(QByteArray data)
 
     case COMM_DETECT_HALL_FOC: {
         QVector<int> table;
-        for (int i = 0;i < 8;i++) {
+        for (int i = 0;i < 16;i++) {
             table.append(vb.vbPopFrontUint8());
         }
         int res = vb.vbPopFrontUint8();
@@ -314,51 +323,57 @@ void Commands::sendTerminalCmd(QString cmd)
     emitData(vb);
 }
 
-void Commands::setDutyCycle(double dutyCycle)
+void Commands::setDutyCycle(double dutyCycle1,double dutyCycle2)
 {
     VByteArray vb;
     vb.vbAppendInt8(COMM_SET_DUTY);
-    vb.vbAppendDouble32(dutyCycle, 1e5);
+    vb.vbAppendDouble32(dutyCycle1, 1e5);
+    vb.vbAppendDouble32(dutyCycle2, 1e5);
     emitData(vb);
 }
 
-void Commands::setCurrent(double current)
+void Commands::setCurrent(double current1,double current2)
 {
     VByteArray vb;
     vb.vbAppendInt8(COMM_SET_CURRENT);
-    vb.vbAppendDouble32(current, 1e3);
+    vb.vbAppendDouble32(current1, 1e3);
+    vb.vbAppendDouble32(current2, 1e3);
     emitData(vb);
 }
 
-void Commands::setCurrentBrake(double current)
+void Commands::setCurrentBrake(double current1,double current2)
 {
     VByteArray vb;
     vb.vbAppendInt8(COMM_SET_CURRENT_BRAKE);
-    vb.vbAppendDouble32(current, 1e3);
+    vb.vbAppendDouble32(current1, 1e3);
+    vb.vbAppendDouble32(current2, 1e3);
     emitData(vb);
 }
 
-void Commands::setRpm(int rpm)
+void Commands::setRpm(int rpm1,int rpm2)
 {
     VByteArray vb;
     vb.vbAppendInt8(COMM_SET_RPM);
-    vb.vbAppendInt32(rpm);
+    vb.vbAppendInt32(rpm1);
+    vb.vbAppendInt32(rpm2);
     emitData(vb);
 }
 
-void Commands::setPos(double pos)
+void Commands::setPos(double pos1,double pos2)
 {
     VByteArray vb;
     vb.vbAppendInt8(COMM_SET_POS);
-    vb.vbAppendDouble32(pos, 1e6);
+    vb.vbAppendDouble32(pos1, 1e6);
+    vb.vbAppendDouble32(pos2, 1e6);
     emitData(vb);
 }
 
-void Commands::setHandbrake(double current)
+void Commands::setHandbrake(double current1,double current2)
 {
     VByteArray vb;
     vb.vbAppendInt8(COMM_SET_HANDBRAKE);
-    vb.vbAppendDouble32(current, 1e3);
+    vb.vbAppendDouble32(current1, 1e3);
+    vb.vbAppendDouble32(current2, 1e3);
     emitData(vb);
 }
 
@@ -538,14 +553,10 @@ void Commands::measureRL()
     emitData(vb);
 }
 
-void Commands::measureLinkage(double current, double min_rpm, double low_duty, double resistance)
+void Commands::measureLinkage()
 {
     VByteArray vb;
     vb.vbAppendInt8(COMM_DETECT_MOTOR_FLUX_LINKAGE);
-    vb.vbAppendDouble32(current, 1e3);
-    vb.vbAppendDouble32(min_rpm, 1e3);
-    vb.vbAppendDouble32(low_duty, 1e3);
-    vb.vbAppendDouble32(resistance, 1e6);
     emitData(vb);
 }
 
@@ -641,9 +652,9 @@ void Commands::firmwareUploadUpdate(bool isTimeout)
         return;
     }
 
-    const int app_packet_size = 200;
+    const int app_packet_size = 100;
     const int retries = 5;
-    const int timeout = 350;
+    const int timeout = 500;
 
     if (mFirmwareState == 0) {
         mFirmwareUploadStatus = "Buffer Erase";
@@ -748,6 +759,10 @@ QString Commands::faultToStr(mc_fault_code fault)
     case FAULT_CODE_ABS_OVER_CURRENT: return "FAULT_CODE_ABS_OVER_CURRENT";
     case FAULT_CODE_OVER_TEMP_FET: return "FAULT_CODE_OVER_TEMP_FET";
     case FAULT_CODE_OVER_TEMP_MOTOR: return "FAULT_CODE_OVER_TEMP_MOTOR";
+    case FAULT_CODE_DRV2: return "FAULT_CODE_DRV2";
+    case FAULT_CODE_ABS_OVER_CURRENT2: return "FAULT_CODE_ABS_OVER_CURRENT2";
+    case FAULT_CODE_OVER_TEMP_FET2: return "FAULT_CODE_OVER_TEMP_FET2";
+    case FAULT_CODE_OVER_TEMP_MOTOR2: return "FAULT_CODE_OVER_TEMP_MOTOR2";
     default: return "Unknown fault";
     }
 }

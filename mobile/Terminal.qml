@@ -1,20 +1,16 @@
 /*
     Copyright 2018 Benjamin Vedder	benjamin@vedder.se
-
-    This file is part of VESC Tool.
-
-    VESC Tool is free software: you can redistribute it and/or modify
+    
+    This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-
-    VESC Tool is distributed in the hope that it will be useful,
+    This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program .  If not, see <http://www.gnu.org/licenses/>.
     */
 
 import QtQuick 2.7
@@ -31,7 +27,7 @@ Item {
     ColumnLayout {
         id: column
         anchors.fill: parent
-        spacing: 0
+        //spacing: 0
 
         ScrollView {
             id: scroll
@@ -54,13 +50,20 @@ Item {
             border.width: 2
             border.color: "#8d8d8d"
             color: "#33a8a8a8"
-            radius: 3
+           // radius: 3
             TextInput {
                 id: stringInput
                 anchors.fill: parent
                 anchors.margins: 7
                 font.pointSize: 12
                 focus: true
+                //font.capitalization: Font.AllLowercase
+                inputMethodHints: Qt.ImhNoAutoUppercase
+                onAccepted:  {
+                    mCommands.sendTerminalCmd(stringInput.text)
+                    stringInput.clear()
+                }
+
             }
         }
 

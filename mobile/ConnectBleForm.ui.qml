@@ -1,20 +1,20 @@
 /*
     Copyright 2017 Benjamin Vedder	benjamin@vedder.se
 
-    This file is part of VESC Tool.
+    
 
-    VESC Tool is free software: you can redistribute it and/or modify
+    This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    VESC Tool is distributed in the hope that it will be useful,
+    This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program .  If not, see <http://www.gnu.org/licenses/>.
     */
 
 import QtQuick 2.7
@@ -25,11 +25,14 @@ Item {
     property alias scanButton: scanButton
     property alias connectButton: connectButton
     property alias disconnectButton: disconnectButton
-    property alias setNameButton: setNameButton
+    property alias connectUSBButton: connectUSBButton
     property alias bleItems: bleItems
     property alias bleBox: bleBox
     property alias canIdBox: canIdBox
     property alias fwdCanBox: fwdCanBox
+    property alias guidedSetupButton: guidedSetupButton
+    property alias titleImage: image
+
 
     id: item1
     width: 400
@@ -40,10 +43,11 @@ Item {
 
         Image {
             id: image
+            fillMode: Image.PreserveAspectFit
             Layout.preferredWidth: Math.min(parent.width, parent.height)
             Layout.preferredHeight: (394 * Layout.preferredWidth) / 1549
             Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
-            source: "qrc:/res/logo.png"
+            source: "qrc:/res/logo_new.png"
         }
 
         Item {
@@ -55,14 +59,27 @@ Item {
         GridLayout {
             clip: false
             visible: true
-            rowSpacing: 0
-            columnSpacing: 5
-            rows: 5
+            rowSpacing: 10
+            columnSpacing: 10
+            rows: 8
             columns: 2
+            Button {
+                id: guidedSetupButton
+                text: qsTr("Guided Setup")
+                Layout.fillWidth: true
+                Layout.columnSpan: 2
+                Layout.preferredHeight: 48
+
+            }
+            Rectangle{
+                opacity: 0
+                Layout.preferredHeight: 10
+                Layout.fillWidth: true
+            }
 
             Label {
                 id: connectionName
-                text: "BLE Connection"
+                text: "Connection"
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                 Layout.fillWidth: true
                 horizontalAlignment: Text.AlignHCenter
@@ -87,7 +104,7 @@ Item {
 
             Button {
                 id: scanButton
-                text: qsTr("Scan")
+                text: qsTr("Scan Bluetooth")
                 Layout.columnSpan: 2
                 Layout.preferredHeight: 48
                 Layout.fillWidth: true
@@ -95,7 +112,7 @@ Item {
 
             Button {
                 id: connectButton
-                text: qsTr("Connect")
+                text: qsTr("Connect Bluetooth")
                 enabled: false
                 Layout.preferredHeight: 48
                 Layout.preferredWidth: 100
@@ -112,39 +129,44 @@ Item {
             }
 
             Button {
-                id: setNameButton
-                text: qsTr("Set Name")
+                id: connectUSBButton
+                text: qsTr("Connect USB")
+                Layout.fillWidth: true
                 Layout.columnSpan: 2
                 Layout.preferredHeight: 48
-                Layout.preferredWidth: 100
+            }
+
+
+
+
+
+            RowLayout {
+                Layout.columnSpan: 2
+                spacing: 10
+                Layout.fillWidth: true
+
+                CheckBox {
+                    id: fwdCanBox
+                    text: qsTr("CAN Forward")
+                }
+
+                SpinBox {
+                    id: canIdBox
+                    Layout.fillWidth: true
+                }
+            }
+
+            Item {
+                // Spacer
+                Layout.fillHeight: true
                 Layout.fillWidth: true
             }
-        }
 
-        RowLayout {
-            Layout.fillWidth: true
-
-            CheckBox {
-                id: fwdCanBox
-                text: qsTr("CAN Forward")
-            }
-
-            SpinBox {
-                id: canIdBox
+            Item {
+                // Spacer
+                Layout.fillHeight: true
                 Layout.fillWidth: true
             }
-        }
-
-        Item {
-            // Spacer
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-        }
-
-        Item {
-            // Spacer
-            Layout.fillHeight: true
-            Layout.fillWidth: true
         }
     }
 }

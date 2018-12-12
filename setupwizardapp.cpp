@@ -1,20 +1,20 @@
 /*
     Copyright 2016 - 2017 Benjamin Vedder	benjamin@vedder.se
 
-    This file is part of VESC Tool.
+    
 
-    VESC Tool is free software: you can redistribute it and/or modify
+    This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    VESC Tool is distributed in the hope that it will be useful,
+    This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program .  If not, see <http://www.gnu.org/licenses/>.
     */
 
 #include "setupwizardapp.h"
@@ -71,10 +71,10 @@ AppIntroPage::AppIntroPage(VescInterface *vesc, QWidget *parent)
     : QWizardPage(parent)
 {
     mVesc = vesc;
-    setTitle(tr("VESC® Input Setup Wizard"));
+    setTitle(tr("FOCBOX® Input Setup Wizard"));
 
     mLabel = new QLabel(tr("This wizard will help you choose what type of input to use "
-                           "for your VESC®, and set up the apps according to your input."
+                           "for your FOCBOX®, and set up the apps according to your input."
                            "<br><br>"
                            "To get more information about the parameters and tools in the "
                            "wizard, click on the questionmark next to them."));
@@ -108,9 +108,9 @@ bool AppIntroPage::validatePage()
         QMessageBox::StandardButton reply;
         reply = QMessageBox::information(this,
                                          tr("Connection"),
-                                         tr("You are not connected to the VESC. Would you like to try to automatically connect?<br><br>"
+                                         tr("You are not connected to the FOCBOX. Would you like to try to automatically connect?<br><br>"
                                             ""
-                                            "<i>Notice that the USB cable must be plugged in and that the VESC "
+                                            "<i>Notice that the USB cable must be plugged in and that the FOCBOX "
                                             "must be powered for the connection to work.</i>"),
                                          QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
 
@@ -128,8 +128,8 @@ AppConnectionPage::AppConnectionPage(VescInterface *vesc, QWidget *parent)
 {
     mVesc = vesc;
 
-    setTitle(tr("Connect VESC"));
-    setSubTitle(tr("The VESC has to be connected in order to use this "
+    setTitle(tr("Connect FOCBOX"));
+    setSubTitle(tr("The FOCBOX has to be connected in order to use this "
                    "wizard. Please connect using one of the available "
                    "interfaces."));
 
@@ -164,10 +164,10 @@ AppFirmwarePage::AppFirmwarePage(VescInterface *vesc, QWidget *parent)
     mVesc = vesc;
 
     setTitle(tr("Update Firmware"));
-    setSubTitle(tr("You need to update the firmware on the VESC in order "
-                   "to use it with this version of VESC Tool."));
+    setSubTitle(tr("You need to update the firmware on the FOCBOX in order "
+                   "to use it with this version of This program."));
 
-    mLabel = new QLabel(tr("Your VESC has old firmware, and needs to be updated. After that, "
+    mLabel = new QLabel(tr("Your FOCBOX has old firmware, and needs to be updated. After that, "
                            "the motor configuration has to be done again. Please run the "
                            "motor configuration wizard to update the firmware and to configure "
                            "the motor."));
@@ -190,26 +190,26 @@ AppMultiPage::AppMultiPage(VescInterface *vesc, QWidget *parent)
     mVesc = vesc;
     mLoadDefaultAsked = false;
 
-    setTitle(tr("Multiple VESCs"));
-    setSubTitle(tr("Do you have more than one VESC on your setup?"));
+    setTitle(tr("Multiple FOCBOXs"));
+    setSubTitle(tr("Do you have more than one FOCBOX on your setup?"));
 
     mModeList = new QListWidget;
     QListWidgetItem *item = new QListWidgetItem;
-    item->setText(tr("My setup has a single VESC."));
+    item->setText(tr("My setup has a single FOCBOX."));
     item->setIcon(QIcon("://res/images/multi_single.png"));
     item->setData(Qt::UserRole, SetupWizardApp::Multi_Single);
     mModeList->addItem(item);
 
     item = new QListWidgetItem;
-    item->setText(tr("My setup has more than one VESC, and I'm configuring the master VESC now. The "
-                  "master VESC is the one that is connected to the input."));
+    item->setText(tr("My setup has more than one FOCBOX, and I'm configuring the master FOCBOX now. The "
+                  "master FOCBOX is the one that is connected to the input."));
     item->setIcon(QIcon("://res/images/multi_master.png"));
     item->setData(Qt::UserRole, SetupWizardApp::Multi_Master);
     mModeList->addItem(item);
 
     item = new QListWidgetItem;
-    item->setText(tr("My setup has more than one VESC, and I'm configuring one of the slave VESCs now. "
-                  "A slave VESC is not connected to any input, only to the other VESCs over CAN-bus."));
+    item->setText(tr("My setup has more than one FOCBOX, and I'm configuring one of the slave FOCBOXs now. "
+                  "A slave FOCBOX is not connected to any input, only to the other FOCBOXs over CAN-bus."));
     item->setIcon(QIcon("://res/images/multi_slave.png"));
     item->setData(Qt::UserRole, SetupWizardApp::Multi_Slave);
     mModeList->addItem(item);
@@ -245,7 +245,7 @@ bool AppMultiPage::validatePage()
     }
 
     if (field("Multi").toInt() == SetupWizardApp::Multi_Slave) {
-        mVesc->appConfig()->updateParamEnum("app_to_use", 3); // Use UART app on slave VESCs
+        mVesc->appConfig()->updateParamEnum("app_to_use", 3); // Use UART app on slave FOCBOXs
     }
 
     mVesc->commands()->setAppConf();
@@ -261,7 +261,7 @@ void AppMultiPage::showEvent(QShowEvent *event)
         reply = QMessageBox::information(this,
                                          tr("Load Default Configuration"),
                                          tr("Would you like to load the default configuration from "
-                                            "the connected VESC before proceeding with the setup?"),
+                                            "the connected FOCBOX before proceeding with the setup?"),
                                          QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
 
         if (reply == QMessageBox::Yes) {
@@ -282,11 +282,11 @@ AppMultiIdPage::AppMultiIdPage(VescInterface *vesc, QWidget *parent)
 {
     mVesc = vesc;
 
-    setTitle(tr("Set VESC ID"));
-    setSubTitle(tr("Make sure that your connected VESCs have unique IDs."));
+    setTitle(tr("Set FOCBOX ID"));
+    setSubTitle(tr("Make sure that your connected FOCBOXs have unique IDs."));
 
     mParamTab = new ParamTable;
-    mLabel = new QLabel(tr("TIP: After this setup you can connect the USB cable to any of the VESCs "
+    mLabel = new QLabel(tr("TIP: After this setup you can connect the USB cable to any of the FOCBOXs "
                            "connected over CAN-bus and access all of them with the CAN forwarding "
                            "function."));
     mLabel->setWordWrap(true);
@@ -330,7 +330,7 @@ AppGeneralPage::AppGeneralPage(VescInterface *vesc, QWidget *parent)
     mVesc = vesc;
 
     setTitle(tr("Choose App"));
-    setSubTitle(tr("Choose what type of input you want to control this VESC with."));
+    setSubTitle(tr("Choose what type of input you want to control this FOCBOX with."));
 
     mInputList = new QListWidget;
     QListWidgetItem *item = new QListWidgetItem;
@@ -456,7 +456,7 @@ void AppNunchukPage::initializePage()
     mParamTab->addParamRow(mVesc->appConfig(), "app_chuk_conf.hyst");
 
     if (field("Multi").toInt() == SetupWizardApp::Multi_Master) {
-        mParamTab->addRowSeparator(tr("Multiple VESCs over CAN-bus"));
+        mParamTab->addRowSeparator(tr("Multiple FOCBOXs over CAN-bus"));
         mParamTab->addParamRow(mVesc->appConfig(), "app_chuk_conf.tc");
         mParamTab->addParamRow(mVesc->appConfig(), "app_chuk_conf.tc_max_diff");
         mVesc->appConfig()->updateParamBool("app_chuk_conf.multi_esc", true);
@@ -623,7 +623,7 @@ void AppPpmPage::initializePage()
     mParamTab->addParamRow(mVesc->appConfig(), "app_ppm_conf.pid_max_erpm");
 
     if (field("Multi").toInt() == SetupWizardApp::Multi_Master) {
-        mParamTab->addRowSeparator(tr("Multiple VESCs over CAN-bus"));
+        mParamTab->addRowSeparator(tr("Multiple FOCBOXs over CAN-bus"));
         mParamTab->addParamRow(mVesc->appConfig(), "app_ppm_conf.tc");
         mParamTab->addParamRow(mVesc->appConfig(), "app_ppm_conf.tc_max_diff");
         mVesc->appConfig()->updateParamBool("app_ppm_conf.multi_esc", true);
@@ -770,7 +770,7 @@ void AppAdcPage::initializePage()
     mParamTab->addParamRow(mVesc->appConfig(), "app_adc_conf.ramp_time_neg");
 
     if (field("Multi").toInt() == SetupWizardApp::Multi_Master) {
-        mParamTab->addRowSeparator(tr("Multiple VESCs over CAN-bus"));
+        mParamTab->addRowSeparator(tr("Multiple FOCBOXs over CAN-bus"));
         mParamTab->addParamRow(mVesc->appConfig(), "app_adc_conf.tc");
         mParamTab->addParamRow(mVesc->appConfig(), "app_adc_conf.tc_max_diff");
         mVesc->appConfig()->updateParamBool("app_adc_conf.multi_esc", true);
@@ -805,18 +805,18 @@ void AppConclusionPage::initializePage()
 {
     switch (field("Multi").toInt()) {
     case SetupWizardApp::Multi_Master:
-        mLabel->setText(tr("You have finished the app setup for the VESC. After configuring "
-                           "all the VESCs in your setup you are done."));
+        mLabel->setText(tr("You have finished the app setup for the FOCBOX. After configuring "
+                           "all the FOCBOXs in your setup you are done."));
         break;
 
     case SetupWizardApp::Multi_Slave:
-        mLabel->setText(tr("You have finished the setup for this VESC. Since this is not the "
-                           "master VESC you don't have to configure any app on it. After configuring "
-                           "all the VESCs in your setup you are done."));
+        mLabel->setText(tr("You have finished the setup for this FOCBOX. Since this is not the "
+                           "master FOCBOX you don't have to configure any app on it. After configuring "
+                           "all the FOCBOXs in your setup you are done."));
         break;
 
     default:
-        mLabel->setText(tr("You have finished the app setup for the VESC. At this point "
+        mLabel->setText(tr("You have finished the app setup for the FOCBOX. At this point "
                            "everything should be ready to run."));
         break;
     }

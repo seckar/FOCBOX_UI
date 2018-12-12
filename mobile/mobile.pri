@@ -1,3 +1,5 @@
+
+
 HEADERS += \
     $$PWD/qmlui.h \
     $$PWD/fwhelper.h
@@ -10,4 +12,6 @@ RESOURCES += \
     $$PWD/qml.qrc
 
 DISTFILES +=
+
+
 

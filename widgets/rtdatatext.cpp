@@ -1,20 +1,20 @@
 /*
     Copyright 2016 - 2017 Benjamin Vedder	benjamin@vedder.se
 
-    This file is part of VESC Tool.
+    
 
-    VESC Tool is free software: you can redistribute it and/or modify
+    This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    VESC Tool is distributed in the hope that it will be useful,
+    This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program .  If not, see <http://www.gnu.org/licenses/>.
     */
 
 #include "rtdatatext.h"
@@ -33,16 +33,25 @@ RtDataText::RtDataText(QWidget *parent) : QWidget(parent)
     mValues.amp_hours_charged = 0;
     mValues.current_in = 0;
     mValues.current_motor = 0;
+    mValues.current_motor2 = 0;
     mValues.duty_now = 0;
+    mValues.duty_now2 = 0;
     mValues.fault_code = FAULT_CODE_NONE;
     mValues.fault_str = "None";
     mValues.id = 0;
     mValues.iq = 0;
+    mValues.id2 = 0;
+    mValues.iq2 = 0;
     mValues.rpm = 0;
+    mValues.rpm2 = 0;
     mValues.tachometer = 0;
     mValues.tachometer_abs = 0;
+    mValues.tachometer2 = 0;
+    mValues.tachometer_abs2 = 0;
     mValues.temp_mos = 0;
+    mValues.temp_mos2 = 0;
     mValues.temp_motor = 0;
+    mValues.temp_motor2 = 0;
     mValues.v_in = 0;
     mValues.watt_hours = 0;
     mValues.watt_hours_charged = 0;
@@ -73,11 +82,13 @@ void RtDataText::paintEvent(QPaintEvent *event)
 
     QFont font;
     font.setFamily("DejaVu Sans Mono");
-    font.setPointSize(11);
+    font.setPointSize(9);
     painter.setFont(font);
 
     QRectF br = painter.boundingRect(QRectF(0, 0, 4000, 4000),
                                     "Fault   : 00000000000000000"
+                                    "T\n"
+                                    "T\n"
                                     "T\n"
                                     "T\n"
                                     "T\n"
@@ -103,16 +114,20 @@ void RtDataText::paintEvent(QPaintEvent *event)
     const double vidw = event->rect().width();
 
     // Left info box
-    str.sprintf("Power   : %.1f W\n"
-                "Duty    : %.2f %%\n"
-                "ERPM    : %.1f\n"
-                "I Batt  : %.2f A\n"
-                "I Motor : %.2f A\n",
+    str.sprintf("Power     : %.1f W\n"
+                "Duty 1    : %.2f %%\n"
+                "Duty 2    : %.2f %%\n"
+                "ERPM 1    : %.1f\n"
+                "ERPM 2    : %.1f\n"
+                "I Motor 1 : %.2f A\n"
+                "I Motor 2 : %.2f A\n",
                 mValues.v_in * mValues.current_in,
                 mValues.duty_now * 100.0,
+                mValues.duty_now2 * 100.0,
                 mValues.rpm,
-                mValues.current_in,
-                mValues.current_motor);
+                mValues.rpm2,
+                mValues.current_motor,
+                mValues.current_motor2);
 
     painter.setOpacity(0.7);
     painter.fillRect(0, 0, bbox_w, bbow_h, Qt::black);
@@ -123,16 +138,20 @@ void RtDataText::paintEvent(QPaintEvent *event)
                      Qt::AlignLeft, str);
 
     // Middle info box
-    str.sprintf("T FET   : %.2f \u00B0C\n"
-                "T Motor : %.2f \u00B0C\n"
-                "Fault   : %s\n"
-                "Tac     : %i\n"
-                "Tac ABS : %i\n",
-                mValues.temp_mos,
-                mValues.temp_motor,
+    str.sprintf("I Batt    : %.2f A\n"
+                "Volts In  : %.1f V\n"
+                "Fault     : %s\n"
+                "Tac 1     : %i\n"
+                "Tac ABS 1 : %i\n"
+                "Tac 2     : %i\n"
+                "Tac ABS 2 : %i\n",
+                mValues.current_in,
+                mValues.v_in,
                 mValues.fault_str.toLocal8Bit().data(),
                 mValues.tachometer,
-                mValues.tachometer_abs);
+                mValues.tachometer_abs,
+                mValues.tachometer2,
+                mValues.tachometer_abs2);
 
     painter.setOpacity(0.7);
     painter.fillRect(vidw / 2.0 - bbox_w / 2.0, 0, bbox_w, bbow_h, Qt::black);
@@ -146,13 +165,17 @@ void RtDataText::paintEvent(QPaintEvent *event)
     str.sprintf("Ah Draw   : %.1f mAh\n"
                 "Ah Charge : %.1f mAh\n"
                 "Wh Draw   : %.2f Wh\n"
-                "Wh Charge : %.2f Wh\n"
-                "Volts In  : %.1f V",
+                "T FET     : %.2f \u00B0C\n"
+                "T FET 2   : %.2f \u00B0C\n"
+                "T Motor 1 : %.2f \u00B0C\n"
+                "T Motor 2 : %.2f \u00B0C\n",
                 mValues.amp_hours * 1000.0,
                 mValues.amp_hours_charged * 1000.0,
                 mValues.watt_hours,
-                mValues.watt_hours_charged,
-                mValues.v_in);
+                mValues.temp_mos,
+                mValues.temp_mos2,
+                mValues.temp_motor,
+                mValues.temp_motor2);
 
     painter.setOpacity(0.7);
     painter.fillRect(vidw - bbox_w, 0, bbox_w,

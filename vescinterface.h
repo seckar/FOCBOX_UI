@@ -1,20 +1,20 @@
 /*
     Copyright 2016 - 2017 Benjamin Vedder	benjamin@vedder.se
 
-    This file is part of VESC Tool.
+    
 
-    VESC Tool is free software: you can redistribute it and/or modify
+    This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    VESC Tool is distributed in the hope that it will be useful,
+    This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program .  If not, see <http://www.gnu.org/licenses/>.
     */
 
 #ifndef VESCINTERFACE_H
@@ -25,8 +25,6 @@
 #include <QByteArray>
 #include <QList>
 #include <QTcpSocket>
-#include <QSettings>
-#include <QHash>
 
 #ifdef HAS_SERIALPORT
 #include <QSerialPort>
@@ -36,17 +34,13 @@
 #include "configparams.h"
 #include "commands.h"
 #include "packet.h"
-
-#ifdef HAS_BLUETOOTH
 #include "bleuart.h"
-#endif
 
 class VescInterface : public QObject
 {
     Q_OBJECT
 public:
     explicit VescInterface(QObject *parent = 0);
-    ~VescInterface();
     Q_INVOKABLE Commands *commands() const;
     Q_INVOKABLE ConfigParams *mcConfig();
     Q_INVOKABLE ConfigParams *appConfig();
@@ -57,12 +51,7 @@ public:
     Q_INVOKABLE void emitStatusMessage(const QString &msg, bool isGood);
     Q_INVOKABLE void emitMessageDialog(const QString &title, const QString &msg, bool isGood, bool richText = false);
     Q_INVOKABLE bool fwRx();
-
-#ifdef HAS_BLUETOOTH
     Q_INVOKABLE BleUart* bleDevice();
-    Q_INVOKABLE void storeBleName(QString address, QString name);
-    Q_INVOKABLE QString getBleName(QString address);
-#endif
 
     // Connection
     Q_INVOKABLE bool isPortConnected();
@@ -100,9 +89,7 @@ private slots:
     void tcpInputDataAvailable();
     void tcpInputError(QAbstractSocket::SocketError socketError);
 
-#ifdef HAS_BLUETOOTH
     void bleDataRx(QByteArray data);
-#endif
 
     void timerSlot();
     void packetDataToSend(QByteArray &data);
@@ -120,9 +107,6 @@ private:
         CONN_TCP,
         CONN_BLE
     } conn_t;
-
-    QSettings mSettings;
-    QHash<QString, QString> mBleNames;
 
     ConfigParams *mMcConfig;
     ConfigParams *mAppConfig;
@@ -152,10 +136,7 @@ private:
     QString mLastTcpServer;
     int mLastTcpPort;
 
-#ifdef HAS_BLUETOOTH
     BleUart *mBleUart;
-#endif
-
     QString mLastBleAddr;
 
     bool mSendCanBefore = false;

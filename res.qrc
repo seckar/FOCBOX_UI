@@ -120,8 +120,6 @@
         <file>res/images/multi_slave.png</file>
         <file>res/icons/User Group Man Man-96.png</file>
         <file>res/icons/Settings-96.png</file>
-        <file>res/bootloaders/60_o_75_300.bin</file>
-        <file>res/bootloaders/40_o_47_o_48_o_410_o_411_o_412_o_DAS_RS.bin</file>
         <file>res/fonts/DejaVuSans.ttf</file>
         <file>res/fonts/DejaVuSans-Oblique.ttf</file>
         <file>res/fonts/DejaVuSansMono-Oblique.ttf</file>
@@ -132,6 +130,18 @@
         <file>res/fonts/DejaVuSans-Bold.ttf</file>
         <file>res/icons/ic_folder_open_black_48dp.png</file>
         <file>res/icons/ic_insert_drive_file_black_48dp.png</file>
-        <file>res/bootloaders/generic.bin</file>
+        <file>res/logo_new.png</file>
+        <file>res/logo_enertion.png</file>
+        <file>res/skate_deck.png</file>
+        <file>res/flux linkage.png</file>
+        <file>res/inductor.png</file>
+        <file>res/resistor.png</file>
+        <file>res/spinIcon.png</file>
+        <file>res/bootloaders/UNITY.bin</file>
+        <file>res/success.png</file>
+        <file>res/icons/arrow_down.svg</file>
+        <file>res/icons/arrow_down2.png</file>
+        <file>res/firmwares/UNITY/UNITY.bin</file>
+        <file>res/images/pinout.png</file>
     </qresource>
 </RCC>

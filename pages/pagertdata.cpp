@@ -1,20 +1,20 @@
 /*
     Copyright 2016 - 2017 Benjamin Vedder	benjamin@vedder.se
 
-    This file is part of VESC Tool.
+    
 
-    VESC Tool is free software: you can redistribute it and/or modify
+    This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    VESC Tool is distributed in the hope that it will be useful,
+    This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program .  If not, see <http://www.gnu.org/licenses/>.
     */
 
 #include "pagertdata.h"
@@ -52,43 +52,78 @@ PageRtData::PageRtData(QWidget *parent) :
 
     ui->currentPlot->addGraph();
     ui->currentPlot->graph(graphIndex)->setPen(QPen(Qt::red));
-    ui->currentPlot->graph(graphIndex)->setName("Current motor");
+    ui->currentPlot->graph(graphIndex)->setName("Current motor 1");
+    graphIndex++;
+
+    ui->currentPlot->addGraph();
+    ui->currentPlot->graph(graphIndex)->setPen(QPen(Qt::darkRed));
+    ui->currentPlot->graph(graphIndex)->setName("Current motor 2");
     graphIndex++;
 
     ui->currentPlot->addGraph(ui->currentPlot->xAxis, ui->currentPlot->yAxis2);
-    ui->currentPlot->graph(graphIndex)->setPen(QPen(Qt::green));
-    ui->currentPlot->graph(graphIndex)->setName("Duty cycle");
+    ui->currentPlot->graph(graphIndex)->setPen(QPen(Qt::cyan));
+    ui->currentPlot->graph(graphIndex)->setName("Duty cycle 1");
+    graphIndex++;
+
+    ui->currentPlot->addGraph(ui->currentPlot->xAxis, ui->currentPlot->yAxis2);
+    ui->currentPlot->graph(graphIndex)->setPen(QPen(Qt::darkCyan));
+    ui->currentPlot->graph(graphIndex)->setName("Duty cycle 2");
     graphIndex++;
 
     // Temperatures
     graphIndex = 0;
     ui->tempPlot->addGraph();
     ui->tempPlot->graph(graphIndex)->setPen(QPen(Qt::blue));
-    ui->tempPlot->graph(graphIndex)->setName("Temperature MOSFET");
+    ui->tempPlot->graph(graphIndex)->setName("Temperature MOSFET 1");
+    graphIndex++;
+
+    ui->tempPlot->addGraph();
+    ui->tempPlot->graph(graphIndex)->setPen(QPen(Qt::green));
+    ui->tempPlot->graph(graphIndex)->setName("Temperature MOSFET 2");
     graphIndex++;
 
     ui->tempPlot->addGraph(ui->tempPlot->xAxis, ui->tempPlot->yAxis2);
     ui->tempPlot->graph(graphIndex)->setPen(QPen(Qt::magenta));
-    ui->tempPlot->graph(graphIndex)->setName("Temperature Motor");
+    ui->tempPlot->graph(graphIndex)->setName("Temperature Motor 1");
+    graphIndex++;
+
+    ui->tempPlot->addGraph(ui->tempPlot->xAxis, ui->tempPlot->yAxis2);
+    ui->tempPlot->graph(graphIndex)->setPen(QPen(Qt::cyan));
+    ui->tempPlot->graph(graphIndex)->setName("Temperature Motor 2");
     graphIndex++;
 
     // RPM
     graphIndex = 0;
     ui->rpmPlot->addGraph();
     ui->rpmPlot->graph(graphIndex)->setPen(QPen(Qt::blue));
-    ui->rpmPlot->graph(graphIndex)->setName("ERPM");
+    ui->rpmPlot->graph(graphIndex)->setName("ERPM 1");
+    graphIndex++;
+
+    ui->rpmPlot->addGraph();
+    ui->rpmPlot->graph(graphIndex)->setPen(QPen(Qt::red));
+    ui->rpmPlot->graph(graphIndex)->setName("ERPM 2");
     graphIndex++;
 
     // FOC
     graphIndex = 0;
     ui->focPlot->addGraph();
     ui->focPlot->graph(graphIndex)->setPen(QPen(Qt::blue));
-    ui->focPlot->graph(graphIndex)->setName("D Current");
+    ui->focPlot->graph(graphIndex)->setName("D Current 1");
+    graphIndex++;
+
+    ui->focPlot->addGraph();
+    ui->focPlot->graph(graphIndex)->setPen(QPen(Qt::darkBlue));
+    ui->focPlot->graph(graphIndex)->setName("D Current 2");
     graphIndex++;
 
     ui->focPlot->addGraph();
     ui->focPlot->graph(graphIndex)->setPen(QPen(Qt::red));
-    ui->focPlot->graph(graphIndex)->setName("Q Current");
+    ui->focPlot->graph(graphIndex)->setName("Q Current 1");
+    graphIndex++;
+
+    ui->focPlot->addGraph();
+    ui->focPlot->graph(graphIndex)->setPen(QPen(Qt::darkRed));
+    ui->focPlot->graph(graphIndex)->setName("Q Current 2");
     graphIndex++;
 
     QFont legendFont = font();
@@ -183,21 +218,28 @@ void PageRtData::timerSlot()
         int graphIndex = 0;
         ui->currentPlot->graph(graphIndex++)->setData(xAxis, mCurrInVec);
         ui->currentPlot->graph(graphIndex++)->setData(xAxis, mCurrMotorVec);
+        ui->currentPlot->graph(graphIndex++)->setData(xAxis, mCurrMotorVec2);
         ui->currentPlot->graph(graphIndex++)->setData(xAxis, mDutyVec);
+        ui->currentPlot->graph(graphIndex++)->setData(xAxis, mDutyVec2);
 
         // Temperature plot
         graphIndex = 0;
         ui->tempPlot->graph(graphIndex++)->setData(xAxis, mTempMosVec);
+        ui->tempPlot->graph(graphIndex++)->setData(xAxis, mTempMosVec2);
         ui->tempPlot->graph(graphIndex++)->setData(xAxis, mTempMotorVec);
+        ui->tempPlot->graph(graphIndex++)->setData(xAxis, mTempMotorVec2);
 
         // RPM plot
         graphIndex = 0;
         ui->rpmPlot->graph(graphIndex++)->setData(xAxis, mRpmVec);
+        ui->rpmPlot->graph(graphIndex++)->setData(xAxis, mRpmVec2);
 
         // FOC plot
         graphIndex = 0;
         ui->focPlot->graph(graphIndex++)->setData(xAxis, mIdVec);
+        ui->focPlot->graph(graphIndex++)->setData(xAxis, mIdVec2);
         ui->focPlot->graph(graphIndex++)->setData(xAxis, mIqVec);
+        ui->focPlot->graph(graphIndex++)->setData(xAxis, mIqVec2);
 
         if (ui->autoscaleButton->isChecked()) {
             ui->currentPlot->rescaleAxes();
@@ -240,13 +282,20 @@ void PageRtData::valuesReceived(MC_VALUES values)
     const int maxS = 500;
 
     appendDoubleAndTrunc(&mTempMosVec, values.temp_mos, maxS);
+    appendDoubleAndTrunc(&mTempMosVec2, values.temp_mos2, maxS);
     appendDoubleAndTrunc(&mTempMotorVec, values.temp_motor, maxS);
+    appendDoubleAndTrunc(&mTempMotorVec2, values.temp_motor2, maxS);
     appendDoubleAndTrunc(&mCurrInVec, values.current_in, maxS);
     appendDoubleAndTrunc(&mCurrMotorVec, values.current_motor, maxS);
+    appendDoubleAndTrunc(&mCurrMotorVec2, values.current_motor2, maxS);
     appendDoubleAndTrunc(&mIdVec, values.id, maxS);
+    appendDoubleAndTrunc(&mIdVec2, values.id2, maxS);
     appendDoubleAndTrunc(&mIqVec, values.iq, maxS);
+    appendDoubleAndTrunc(&mIqVec2, values.iq2, maxS);
     appendDoubleAndTrunc(&mDutyVec, values.duty_now, maxS);
+    appendDoubleAndTrunc(&mDutyVec2, values.duty_now2, maxS);
     appendDoubleAndTrunc(&mRpmVec, values.rpm, maxS);
+    appendDoubleAndTrunc(&mRpmVec2, values.rpm2, maxS);
 
     qint64 tNow = QDateTime::currentMSecsSinceEpoch();
 

@@ -1,20 +1,20 @@
 ﻿/*
     Copyright 2016 - 2017 Benjamin Vedder	benjamin@vedder.se
 
-    This file is part of VESC Tool.
+    
 
-    VESC Tool is free software: you can redistribute it and/or modify
+    This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    VESC Tool is distributed in the hope that it will be useful,
+    This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program .  If not, see <http://www.gnu.org/licenses/>.
     */
 
 #include "vescinterface.h"
@@ -81,20 +81,9 @@ VescInterface::VescInterface(QObject *parent) : QObject(parent)
             this, SLOT(tcpInputError(QAbstractSocket::SocketError)));
 
     // BLE
-#ifdef HAS_BLUETOOTH
     mBleUart = new BleUart(this);
 
-    int size = mSettings.beginReadArray("bleNames");
-    for (int i = 0; i < size; ++i) {
-        mSettings.setArrayIndex(i);
-        QString address = mSettings.value("address").toString();
-        QString name = mSettings.value("name").toString();
-        mBleNames.insert(address, name);
-    }
-    mSettings.endArray();
-
     connect(mBleUart, SIGNAL(dataRx(QByteArray)), this, SLOT(bleDataRx(QByteArray)));
-#endif
 
     mCommands->setAppConfig(mAppConfig);
     mCommands->setMcConfig(mMcConfig);
@@ -112,23 +101,6 @@ VescInterface::VescInterface(QObject *parent) : QObject(parent)
     connect(mCommands, SIGNAL(ackReceived(QString)), this, SLOT(ackReceived(QString)));
     connect(mMcConfig, SIGNAL(updated()), this, SLOT(mcconfUpdated()));
     connect(mAppConfig, SIGNAL(updated()), this, SLOT(appconfUpdated()));
-}
-
-VescInterface::~VescInterface()
-{
-    mSettings.beginWriteArray("bleNames");
-
-    QHashIterator<QString, QString> i(mBleNames);
-    int ind = 0;
-    while (i.hasNext()) {
-        i.next();
-        mSettings.setArrayIndex(ind);
-        mSettings.setValue("address", i.key());
-        mSettings.setValue("name", i.value());
-        ind++;
-    }
-
-    mSettings.endArray();
 }
 
 Commands *VescInterface::commands() const
@@ -203,26 +175,10 @@ bool VescInterface::fwRx()
     return mFwVersionReceived;
 }
 
-#ifdef HAS_BLUETOOTH
 BleUart *VescInterface::bleDevice()
 {
     return mBleUart;
 }
-
-void VescInterface::storeBleName(QString address, QString name)
-{
-    mBleNames.insert(address, name);
-}
-
-QString VescInterface::getBleName(QString address)
-{
-    QString res;
-    if(mBleNames.contains(address)) {
-        res = mBleNames[address];
-    }
-    return res;
-}
-#endif
 
 bool VescInterface::isPortConnected()
 {
@@ -238,11 +194,9 @@ bool VescInterface::isPortConnected()
         res = true;
     }
 
-#ifdef HAS_BLUETOOTH
     if (mBleUart->isConnected()) {
         res = true;
     }
-#endif
 
     return res;
 }
@@ -261,12 +215,10 @@ void VescInterface::disconnectPort()
         updateFwRx(false);
     }
 
-#ifdef HAS_BLUETOOTH
     if (mBleUart->isConnected()) {
         mBleUart->disconnectBle();
         updateFwRx(false);
     }
-#endif
 
     mFwRetries = 0;
 }
@@ -283,9 +235,7 @@ bool VescInterface::reconnectLastPort()
         connectTcp(mLastTcpServer, mLastTcpPort);
         return true;
     } else if (mLastConnType == CONN_BLE) {
-#ifdef HAS_BLUETOOTH
         mBleUart->startConnect(mLastBleAddr);
-#endif
         return true;
     } else {
 #ifdef HAS_SERIALPORT
@@ -372,12 +322,10 @@ QString VescInterface::getConnectedPortName()
         connected = true;
     }
 
-#ifdef HAS_BLUETOOTH
     if (mBleUart->isConnected()) {
         res = tr("Connected (BLE) to %1").arg(mLastBleAddr);
         connected = true;
     }
-#endif
 
     if (connected && mCommands->isLimitedMode()) {
         res += tr(", limited mode");
@@ -448,7 +396,7 @@ bool VescInterface::connectSerial(QString port, int baudrate)
     (void)baudrate;
     emit messageDialog(tr("Connect serial"),
                        tr("Serial port support is not enabled in this build "
-                          "of VESC Tool."),
+                          "of FOCBOX UI."),
                        false, false);
     return false;
 #endif
@@ -468,7 +416,7 @@ QList<VSerialInfo_t> VescInterface::listSerialPorts()
         int index = res.size();
 
         if(port.manufacturer().startsWith("STMicroelectronics")) {
-            info.name.insert(0, "VESC - ");
+            info.name.insert(0, "UNITY - ");
             info.isVesc = true;
             index = 0;
         } else {
@@ -506,13 +454,9 @@ void VescInterface::connectTcp(QString server, int port)
 
 void VescInterface::connectBle(QString address)
 {
-#ifdef HAS_BLUETOOTH
     mBleUart->startConnect(address);
     mLastConnType = CONN_BLE;
     mLastBleAddr = address;
-#else
-    (void)address;
-#endif
 }
 
 bool VescInterface::isAutoconnectOngoing() const
@@ -586,12 +530,10 @@ void VescInterface::tcpInputError(QAbstractSocket::SocketError socketError)
     updateFwRx(false);
 }
 
-#ifdef HAS_BLUETOOTH
 void VescInterface::bleDataRx(QByteArray data)
 {
     mPacket->processData(data);
 }
-#endif
 
 void VescInterface::timerSlot()
 {
@@ -621,7 +563,7 @@ void VescInterface::timerSlot()
                     emit statusMessage(tr("No firmware read response"), false);
                     emit messageDialog(tr("Read Firmware Version"),
                                        tr("Could not read firmware version. Make sure "
-                                          "that selected port really belongs to the VESC. "),
+                                          "that selected port really belongs to the FOCBOX. "),
                                        false, false);
                     disconnectPort();
                 }
@@ -672,11 +614,9 @@ void VescInterface::packetDataToSend(QByteArray &data)
         mTcpSocket->write(data);
     }
 
-#ifdef HAS_BLUETOOTH
     if (mBleUart->isConnected()) {
         mBleUart->writeData(data);
     }
-#endif
 }
 
 void VescInterface::packetReceived(QByteArray &data)
@@ -697,7 +637,7 @@ void VescInterface::fwVersionReceived(int major, int minor, QString hw, QByteArr
 
     if (fwPairs.isEmpty()) {
         emit messageDialog(tr("No Supported Firmwares"),
-                           tr("This version of VESC Tool does not seem to have any supported "
+                           tr("This version of FOCBOX UI does not seem to have any supported "
                               "firmwares. Something is probably wrong with the motor configuration "
                               "file."),
                            false, false);
@@ -717,16 +657,16 @@ void VescInterface::fwVersionReceived(int major, int minor, QString hw, QByteArr
         updateFwRx(false);
         mFwRetries = 0;
         disconnectPort();
-        emit messageDialog(tr("Error"), tr("The firmware on the connected VESC is too old. Please"
+        emit messageDialog(tr("Error"), tr("The firmware on the connected FOCBOX is too old. Please"
                                            " update it using a programmer."), false, false);
     } else if (fw_connected > highest_supported) {
         mCommands->setLimitedMode(true);
         updateFwRx(true);
         if (!wasReceived) {
-            emit messageDialog(tr("Warning"), tr("The connected VESC has newer firmware than this version of"
-                                                " VESC Tool supports. It is recommended that you update VESC "
-                                                " Tool to the latest version. Alternatively, the firmware on"
-                                                " the connected VESC can be downgraded in the firmware page."
+            emit messageDialog(tr("Warning"), tr("The connected FOCBOX has newer firmware than this version of"
+                                                " FOCBOX UI supports. It is recommended that you update FOCBOX"
+                                                " UI to the latest version. Alternatively, the firmware on"
+                                                " the connected FOCBOX can be downgraded in the firmware page."
                                                 " Until then, limited communication mode will be used where"
                                                 " only the firmware can be changed."), false, false);
         }
@@ -735,8 +675,8 @@ void VescInterface::fwVersionReceived(int major, int minor, QString hw, QByteArr
             mCommands->setLimitedMode(true);
             updateFwRx(true);
             if (!wasReceived) {
-                emit messageDialog(tr("Warning"), tr("The connected VESC has too old firmware. Since the"
-                                                    " connected VESC has firmware with bootloader support, it can be"
+                emit messageDialog(tr("Warning"), tr("The connected FOCBOX has too old firmware. Since the"
+                                                    " connected FOCBOX has firmware with bootloader support, it can be"
                                                     " updated from the Firmware page."
                                                     " Until then, limited communication mode will be used where only the"
                                                     " firmware can be changed."), false, false);
@@ -746,21 +686,21 @@ void VescInterface::fwVersionReceived(int major, int minor, QString hw, QByteArr
             mFwRetries = 0;
             disconnectPort();
             if (!wasReceived) {
-                emit messageDialog(tr("Error"), tr("The firmware on the connected VESC is too old. Please"
+                emit messageDialog(tr("Error"), tr("The firmware on the connected FOCBOX is too old. Please"
                                                    " update it using a programmer."), false, false);
             }
         }
     } else {
         updateFwRx(true);
-        if (fw_connected < highest_supported) {
+       /* if (fw_connected < highest_supported) {
             if (!wasReceived) {
-                emit messageDialog(tr("Warning"), tr("The connected VESC has compatible, but old"
+                emit messageDialog(tr("Warning"), tr("The connected FOCBOX has compatible, but old"
                                                     " firmware. It is recommended that you update it."), false, false);
             }
-        }
+        }*/
 
         QString fwStr;
-        fwStr.sprintf("VESC Firmware Version %d.%d", major, minor);
+        fwStr.sprintf("FOCBOX Firmware Version %d.%d", major, minor);
         if (!hw.isEmpty()) {
             fwStr += ", Hardware: " + hw;
         }

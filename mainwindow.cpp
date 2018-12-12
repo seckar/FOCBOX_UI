@@ -1,20 +1,20 @@
 /*
     Copyright 2016 - 2017 Benjamin Vedder	benjamin@vedder.se
 
-    This file is part of VESC Tool.
+    This file is part of FOCBOX Tool.
 
-    VESC Tool is free software: you can redistribute it and/or modify
+    FOCBOX Tool is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    VESC Tool is distributed in the hope that it will be useful,
+    FOCBOX Tool is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program .  If not, see <http://www.gnu.org/licenses/>.
     */
 
 #include "mainwindow.h"
@@ -121,11 +121,18 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionAboutQt, SIGNAL(triggered(bool)),
             qApp, SLOT(aboutQt()));
 
-    ui->dispDuty->setName("Duty");
+    ui->dispDuty->setName("Duty 1");
     ui->dispDuty->setRange(100.0);
     ui->dispDuty->setUnit(" %");
     ui->dispDuty->setDecimals(1);
 
+    ui->dispDuty2->setName("Duty 2");
+    ui->dispDuty2->setRange(100.0);
+    ui->dispDuty2->setUnit(" %");
+    ui->dispDuty2->setDecimals(1);
+
+    ui->dispCurrent->setName("Current 1");
+    ui->dispCurrent2->setName("Current 2");
     // Remove the menu with the option to hide the toolbar
     ui->mainToolBar->setContextMenuPolicy(Qt::PreventContextMenu);
 
@@ -160,7 +167,7 @@ MainWindow::MainWindow(QWidget *parent) :
         }
     }
 
-    mPageDebugPrint->printConsole("VESC® Tool " + mVersion + " started<br>");
+    mPageDebugPrint->printConsole("FOCBOX Tool " + mVersion + " started<br>");
 }
 
 MainWindow::~MainWindow()
@@ -209,20 +216,20 @@ bool MainWindow::eventFilter(QObject *object, QEvent *e)
         switch(keyEvent->key()) {
         case Qt::Key_Up:
             if (isPress) {
-                mVesc->commands()->setCurrent(ui->currentBox->value());
+                mVesc->commands()->setCurrent(ui->currentBox->value(),ui->currentBox2->value());
                 ui->actionSendAlive->setChecked(true);
             } else {
-                mVesc->commands()->setCurrent(0.0);
+                mVesc->commands()->setCurrent(0.0,0.0);
                 ui->actionSendAlive->setChecked(false);
             }
             break;
 
         case Qt::Key_Down:
             if (isPress) {
-                mVesc->commands()->setCurrent(-ui->currentBox->value());
+                mVesc->commands()->setCurrent(-ui->currentBox->value(),-ui->currentBox2->value());
                 ui->actionSendAlive->setChecked(true);
             } else {
-                mVesc->commands()->setCurrent(0.0);
+                mVesc->commands()->setCurrent(0.0,0.0);
                 ui->actionSendAlive->setChecked(false);
             }
             break;
@@ -245,10 +252,10 @@ bool MainWindow::eventFilter(QObject *object, QEvent *e)
 
         case Qt::Key_PageDown:
             if (isPress) {
-                mVesc->commands()->setCurrentBrake(-ui->currentBox->value());
+                mVesc->commands()->setCurrentBrake(-ui->currentBox->value(),-ui->currentBox2->value());
                 ui->actionSendAlive->setChecked(true);
             } else {
-                mVesc->commands()->setCurrent(0.0);
+                mVesc->commands()->setCurrent(0.0,0.0);
                 ui->actionSendAlive->setChecked(false);
             }
             break;
@@ -310,7 +317,7 @@ void MainWindow::timerSlot()
         }
     }
 
-    // Read configurations if they haven't been read since starting VESC Tool
+    // Read configurations if they haven't been read since starting FOCBOX Tool
     if (mVesc->isPortConnected()) {
         static int conf_cnt = 0;
         conf_cnt++;
@@ -372,14 +379,14 @@ void MainWindow::timerSlot()
 
     if (keyPower != lastKeyPower) {
         lastKeyPower = keyPower;
-        mVesc->commands()->setDutyCycle(keyPower);
+        mVesc->commands()->setDutyCycle(keyPower,keyPower);
         ui->actionSendAlive->setChecked(true);
     }
 
     // Run startup checks
     static bool has_run_start_checks = false;
     if (!has_run_start_checks) {
-        if (mSettings.contains("introVersion")) {
+        /*if (mSettings.contains("introVersion")) {
             if (mSettings.value("introVersion").toInt() != VT_INTRO_VERSION) {
                 mSettings.setValue("intro_done", false);
             }
@@ -399,10 +406,10 @@ void MainWindow::timerSlot()
         if (!mSettings.value("intro_done").toBool()) {
             QMessageBox::critical(this,
                                   tr("Warning"),
-                                  tr("You have not finished the VESC Tool introduction. You must do that "
-                                     "in order to use VESC Tool."));
+                                  tr("You have not finished the FOCBOX Tool introduction. You must do that "
+                                     "in order to use This program."));
             QCoreApplication::quit();
-        }
+        }*/
 
         has_run_start_checks = true;
         checkUdev();
@@ -413,7 +420,7 @@ void MainWindow::timerSlot()
 void MainWindow::showStatusInfo(QString info, bool isGood)
 {
     if (isGood) {
-        mStatusLabel->setStyleSheet("QLabel { background-color : lightgreen; color : black; }");
+        mStatusLabel->setStyleSheet("QLabel { background-color : rgb(130, 255, 255); color : black; }");
         mPageDebugPrint->printConsole("Status: " + info + "<br>");
     } else {
         mStatusLabel->setStyleSheet("QLabel { background-color : red; color : black; }");
@@ -503,6 +510,8 @@ void MainWindow::valuesReceived(MC_VALUES values)
 {
     ui->dispCurrent->setVal(values.current_motor);
     ui->dispDuty->setVal(values.duty_now * 100.0);
+    ui->dispCurrent2->setVal(values.current_motor2);
+    ui->dispDuty2->setVal(values.duty_now2 * 100.0);
 }
 
 void MainWindow::paramChangedDouble(QObject *src, QString name, double newParam)
@@ -552,13 +561,13 @@ void MainWindow::on_actionReboot_triggered()
 
 void MainWindow::on_stopButton_clicked()
 {
-    mVesc->commands()->setCurrent(0);
+    mVesc->commands()->setCurrent(0,0);
     ui->actionSendAlive->setChecked(false);
 }
 
 void MainWindow::on_fullBrakeButton_clicked()
 {
-    mVesc->commands()->setDutyCycle(0);
+    mVesc->commands()->setDutyCycle(0,0);
     ui->actionSendAlive->setChecked(true);
 }
 
@@ -703,7 +712,7 @@ void MainWindow::on_actionExit_triggered()
 
 void MainWindow::on_actionAbout_triggered()
 {
-    QMessageBox::about(this, "VESC Tool", Utility::aboutText());
+    QMessageBox::about(this, "FOCBOX Tool", Utility::aboutText());
 }
 
 void MainWindow::on_actionLibrariesUsed_triggered()
@@ -717,37 +726,37 @@ void MainWindow::on_actionLibrariesUsed_triggered()
 
 void MainWindow::on_dutyButton_clicked()
 {
-    mVesc->commands()->setDutyCycle(ui->dutyBox->value());
+    mVesc->commands()->setDutyCycle(ui->dutyBox->value(),ui->dutyBox2->value());
     ui->actionSendAlive->setChecked(true);
 }
 
 void MainWindow::on_currentButton_clicked()
 {
-    mVesc->commands()->setCurrent(ui->currentBox->value());
+    mVesc->commands()->setCurrent(ui->currentBox->value(),ui->currentBox2->value());
     ui->actionSendAlive->setChecked(true);
 }
 
 void MainWindow::on_speedButton_clicked()
 {
-    mVesc->commands()->setRpm(ui->speedBox->value());
+    mVesc->commands()->setRpm(ui->speedBox->value(),ui->speedBox2->value());
     ui->actionSendAlive->setChecked(true);
 }
 
 void MainWindow::on_posButton_clicked()
 {
-    mVesc->commands()->setPos(ui->posBox->value());
+    mVesc->commands()->setPos(ui->posBox->value(),ui->posBox2->value());
     ui->actionSendAlive->setChecked(true);
 }
 
 void MainWindow::on_brakeCurrentButton_clicked()
 {
-    mVesc->commands()->setCurrentBrake(ui->brakeCurrentBox->value());
+    mVesc->commands()->setCurrentBrake(ui->brakeCurrentBox->value(),ui->brakeCurrentBox2->value());
     ui->actionSendAlive->setChecked(true);
 }
 
 void MainWindow::on_handbrakeButton_clicked()
 {
-    mVesc->commands()->setHandbrake(ui->handbrakeBox->value());
+    mVesc->commands()->setHandbrake(ui->handbrakeBox->value(),ui->handbrakeBox2->value());
     ui->actionSendAlive->setChecked(true);
 }
 
@@ -857,18 +866,6 @@ void MainWindow::reloadPages()
     addPageItem(tr("General"), "://res/icons/Horizontal Settings Mixer-96.png",
                 "://res/icons/mcconf.png", false, true);
 
-    mPageBldc = new PageBldc(this);
-    mPageBldc->setVesc(mVesc);
-    ui->pageWidget->addWidget(mPageBldc);
-    addPageItem(tr("BLDC"), "://res/icons/bldc.png",
-                "://res/icons/mcconf.png", false, true);
-
-    mPageDc = new PageDc(this);
-    mPageDc->setVesc(mVesc);
-    ui->pageWidget->addWidget(mPageDc);
-    addPageItem(tr("DC"), "://res/icons/Car Battery-96.png",
-                "://res/icons/mcconf.png", false, true);
-
     mPageFoc = new PageFoc(this);
     mPageFoc->setVesc(mVesc);
     ui->pageWidget->addWidget(mPageFoc);
@@ -946,7 +943,7 @@ void MainWindow::reloadPages()
     mPageTerminal = new PageTerminal(this);
     mPageTerminal->setVesc(mVesc);
     ui->pageWidget->addWidget(mPageTerminal);
-    addPageItem(tr("VESC Terminal"), "://res/icons/Console-96.png", "", true);
+    addPageItem(tr("FOCBOX Terminal"), "://res/icons/Console-96.png", "", true);
 
     mPageDebugPrint = new PageDebugPrint(this);
     ui->pageWidget->addWidget(mPageDebugPrint);
@@ -954,7 +951,7 @@ void MainWindow::reloadPages()
 
     mPageSettings = new PageSettings(this);
     ui->pageWidget->addWidget(mPageSettings);
-    addPageItem(tr("VESC Tool Settings"), "://res/icons/Settings-96.png", "", true);
+    addPageItem(tr("FOCBOX Tool Settings"), "://res/icons/Settings-96.png", "", true);
 
     // Adjust sizes
     QFontMetrics fm(this->font());
@@ -987,9 +984,9 @@ void MainWindow::checkUdev()
             reply = QMessageBox::information(this,
                                              tr("Modemmenager"),
                                              tr("It looks like modemmanager is installed on your system, and that "
-                                                "there are no VESC udev rules installed. This will cause a delay "
-                                                "from when you plug in the VESC until you can use it. Would you like "
-                                                "to add a udev rule to prevent modemmanager from grabbing the VESC?"),
+                                                "there are no FOCBOX udev rules installed. This will cause a delay "
+                                                "from when you plug in the FOCBOX until you can use it. Would you like "
+                                                "to add a udev rule to prevent modemmanager from grabbing the FOCBOX?"),
                                              QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
 
             if (reply == QMessageBox::Yes) {
@@ -1001,7 +998,7 @@ void MainWindow::checkUdev()
                     return;
                 }
 
-                f_vesc.write("# Prevent modemmanager from grabbing the VESC\n"
+                f_vesc.write("# Prevent modemmanager from grabbing the FOCBOX\n"
                              "ATTRS{idVendor}==\"0483\", ATTRS{idProduct}==\"5740\", ENV{ID_MM_DEVICE_IGNORE}=\"1\"\n");
                 f_vesc.close();
 
@@ -1156,25 +1153,25 @@ void MainWindow::on_actionSaveAppConfigurationHeaderWrap_triggered()
 void MainWindow::on_actionTerminalPrintFaults_triggered()
 {
     mVesc->commands()->sendTerminalCmd("faults");
-    showPage("VESC Terminal");
+    showPage("FOCBOX Terminal");
 }
 
 void MainWindow::on_actionTerminalShowHelp_triggered()
 {
     mVesc->commands()->sendTerminalCmd("help");
-    showPage("VESC Terminal");
+    showPage("FOCBOX Terminal");
 }
 
 void MainWindow::on_actionTerminalClear_triggered()
 {
     mPageTerminal->clearTerminal();
-    showPage("VESC Terminal");
+    showPage("FOCBOX Terminal");
 }
 
 void MainWindow::on_actionTerminalPrintThreads_triggered()
 {
-    mVesc->commands()->sendTerminalCmd("threads");
-    showPage("VESC Terminal");
+    mVesc->commands()->sendTerminalCmd("threafds");
+    showPage("FOCBOX Terminal");
 }
 
 void MainWindow::on_actionTerminalDRV8301ResetLatchedFaults_triggered()
@@ -1186,6 +1183,8 @@ void MainWindow::on_actionCanFwd_toggled(bool arg1)
 {
     mVesc->commands()->setSendCan(arg1);
 }
+
+
 
 void MainWindow::on_actionSafetyInformation_triggered()
 {
@@ -1215,15 +1214,4 @@ void MainWindow::on_actionVESCProjectForums_triggered()
 void MainWindow::on_actionLicense_triggered()
 {
     HelpDialog::showHelp(this, mVesc->infoConfig(), "gpl_text");
-}
-
-void MainWindow::on_posBox_editingFinished()
-{
-    on_posButton_clicked();
-}
-
-void MainWindow::on_posBox_valueChanged(double arg1)
-{
-    (void)arg1;
-//    on_posButton_clicked();
 }

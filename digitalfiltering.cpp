@@ -1,14 +1,14 @@
 /*
     Copyright 2016 - 2017 Benjamin Vedder	benjamin@vedder.se
 
-    This file is part of VESC Tool.
 
-    VESC Tool is free software: you can redistribute it and/or modify
+
+    This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    VESC Tool is distributed in the hope that it will be useful,
+    This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
@@ -20,7 +20,9 @@
 #include "digitalfiltering.h"
 #include <cmath>
 #include <QDebug>
-
+#ifndef M_PI
+#define M_PI 3.141592653589793238462643383279502
+#endif
 DigitalFiltering::DigitalFiltering()
 {
 }
@@ -229,8 +231,8 @@ QVector<double> DigitalFiltering::filterSignal(const QVector<double> &signal, co
 QVector<double> DigitalFiltering::generateFirFilter(double f_break, int bits, bool useHamming)
 {
     int taps = 1 << bits;
-    double imag[taps];
-    double filter_vector[taps];
+    double * imag = new double[taps];
+    double * filter_vector = new double[taps];
 
     for(int i = 0;i < taps;i++) {
         if (i < (int)((double)taps * f_break)) {
@@ -256,7 +258,8 @@ QVector<double> DigitalFiltering::generateFirFilter(double f_break, int bits, bo
     for(int i = 0;i < taps;i++) {
         result.append(filter_vector[i]);
     }
-
+    delete [] imag;
+    delete [] filter_vector;
     return result;
 }
 

@@ -1,20 +1,20 @@
 /*
     Copyright 2016 - 2017 Benjamin Vedder	benjamin@vedder.se
 
-    This file is part of VESC Tool.
+    
 
-    VESC Tool is free software: you can redistribute it and/or modify
+    This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    VESC Tool is distributed in the hope that it will be useful,
+    This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program .  If not, see <http://www.gnu.org/licenses/>.
     */
 
 #ifndef COMMANDS_H
@@ -61,12 +61,12 @@ signals:
     void decodedPpmReceived(double value, double last_len);
     void decodedAdcReceived(double value, double voltage, double value2, double voltage2);
     void decodedChukReceived(double value);
-    void motorRLReceived(double r, double l);
-    void motorLinkageReceived(double flux_linkage);
+    void motorRLReceived(double r, double l, double r2, double l2);
+    void motorLinkageReceived(double flux_linkage,double flux_linkage2, bool dir1, bool dir2);
     void encoderParamReceived(double offset, double ratio, bool inverted);
     void customAppDataReceived(QByteArray data);
     void focHallTableReceived(QVector<int> hall_table, int res);
-    void nrfPairingRes(int res);
+    void nrfPairingRes(NRF_PAIR_RES res);
     void mcConfigCheckResult(QStringList paramsNotSet);
 
 public slots:
@@ -75,12 +75,12 @@ public slots:
     void getFwVersion();
     void getValues();
     void sendTerminalCmd(QString cmd);
-    void setDutyCycle(double dutyCycle);
-    void setCurrent(double current);
-    void setCurrentBrake(double current);
-    void setRpm(int rpm);
-    void setPos(double pos);
-    void setHandbrake(double current);
+    void setDutyCycle(double dutyCycle1,double dutyCycle2);
+    void setCurrent(double current1,double current2);
+    void setCurrentBrake(double current1,double current2);
+    void setRpm(int rpm1,int rpm2);
+    void setPos(double pos1,double pos2);
+    void setHandbrake(double current1,double current2);
     void setDetect(disp_pos_mode mode);
     void samplePrint(debug_sampling_mode mode, int sample_len, int dec);
     void getMcconf();
@@ -97,7 +97,7 @@ public slots:
     void getDecodedChuk();
     void setServoPos(double pos);
     void measureRL();
-    void measureLinkage(double current, double min_rpm, double low_duty, double resistance);
+    void measureLinkage();
     void measureEncoder(double current);
     void measureHallFoc(double current);
     void sendCustomAppData(QByteArray data);

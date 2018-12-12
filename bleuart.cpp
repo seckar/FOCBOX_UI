@@ -1,20 +1,20 @@
 /*
     Copyright 2017 Benjamin Vedder	benjamin@vedder.se
 
-    This file is part of VESC Tool.
 
-    VESC Tool is free software: you can redistribute it and/or modify
+
+    This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    VESC Tool is distributed in the hope that it will be useful,
+    This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program .  If not, see <http://www.gnu.org/licenses/>.
     */
 
 #include "bleuart.h"
@@ -29,10 +29,12 @@ BleUart::BleUart(QObject *parent) : QObject(parent)
     mUartServiceFound = false;
     mConnectDone = false;
 
-    mServiceUuid = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
-    mRxUuid = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
-    mTxUuid = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
-
+    mServiceUuidtry1 = "0000ffe0-0000-1000-8000-00805f9b34fb";
+    mRxUuidtry1 = "0000ffe2-0000-1000-8000-00805f9b34fb";
+    mTxUuidtry1 = "0000ffe1-0000-1000-8000-00805f9b34fb";
+    mServiceUuidtry2 = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
+    mRxUuidtry2 = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
+    mTxUuidtry2 = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
     mDeviceDiscoveryAgent = new QBluetoothDeviceDiscoveryAgent(this);
 
     connect(mDeviceDiscoveryAgent, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo&)),
@@ -77,6 +79,14 @@ void BleUart::startConnect(QString addr)
     mControl->connectToDevice();
 }
 
+void BleUart::refreshDevice()
+{
+   // qDebug() << "BLE device connected";
+    mService->discoverDetails();
+    //mControl->requestConnectionUpdate(mService);
+}
+
+
 void BleUart::disconnectBle()
 {
     if (mService) {
@@ -106,10 +116,11 @@ void BleUart::writeData(QByteArray data)
     if (isConnected()) {
         const QLowEnergyCharacteristic  rxChar = mService->characteristic(QBluetoothUuid(QUuid(mRxUuid)));
         if (rxChar.isValid()) {
-            while(data.size() > 20) {
-                mService->writeCharacteristic(rxChar, data.mid(0, 20),
+            while(data.size() > 100) {
+                mService->writeCharacteristic(rxChar, data.mid(0, 100),
                                               QLowEnergyService::WriteWithoutResponse);
-                data.remove(0, 20);
+                data.remove(0, 100);
+
             }
 
             mService->writeCharacteristic(rxChar, data, QLowEnergyService::WriteWithoutResponse);
@@ -122,7 +133,7 @@ void BleUart::addDevice(const QBluetoothDeviceInfo &dev)
     if (dev.coreConfigurations() & QBluetoothDeviceInfo::LowEnergyCoreConfiguration) {
         qDebug() << "BLE scan found device:" << dev.name();
 
-        mDevs.insert(dev.address().toString(), dev.name());
+        mDevs.insert(dev.name(), dev.address().toString());
 
         emit scanDone(mDevs, false);
     }
@@ -144,7 +155,17 @@ void BleUart::deviceScanError(QBluetoothDeviceDiscoveryAgent::Error e)
 
 void BleUart::serviceDiscovered(const QBluetoothUuid &gatt)
 {
-    if (gatt==QBluetoothUuid(QUuid(mServiceUuid))){
+    if (gatt==QBluetoothUuid(QUuid(mServiceUuidtry1))){
+        mServiceUuid = mServiceUuidtry1;
+        mRxUuid = mRxUuidtry1;
+        mTxUuid = mTxUuidtry1;
+        qDebug() << "BLE UART service found!";
+        mUartServiceFound = true;
+    }
+    if (gatt==QBluetoothUuid(QUuid(mServiceUuidtry2))){
+        mServiceUuid = mServiceUuidtry2;
+        mRxUuid = mRxUuidtry2;
+        mTxUuid = mTxUuidtry2;
         qDebug() << "BLE UART service found!";
         mUartServiceFound = true;
     }
@@ -185,6 +206,8 @@ void BleUart::deviceConnected()
     qDebug() << "BLE device connected";
     mControl->discoverServices();
 }
+
+
 
 void BleUart::deviceDisconnected()
 {

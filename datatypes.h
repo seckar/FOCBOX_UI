@@ -1,20 +1,20 @@
 /*
     Copyright 2016 - 2017 Benjamin Vedder	benjamin@vedder.se
 
-    This file is part of VESC Tool.
+    
 
-    VESC Tool is free software: you can redistribute it and/or modify
+    This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    VESC Tool is distributed in the hope that it will be useful,
+    This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program .  If not, see <http://www.gnu.org/licenses/>.
     */
 
 #ifndef DATATYPES_H
@@ -61,7 +61,11 @@ typedef enum {
     FAULT_CODE_DRV,
     FAULT_CODE_ABS_OVER_CURRENT,
     FAULT_CODE_OVER_TEMP_FET,
-    FAULT_CODE_OVER_TEMP_MOTOR
+    FAULT_CODE_OVER_TEMP_MOTOR,
+    FAULT_CODE_DRV2,
+    FAULT_CODE_ABS_OVER_CURRENT2,
+    FAULT_CODE_OVER_TEMP_FET2,
+    FAULT_CODE_OVER_TEMP_MOTOR2
 } mc_fault_code;
 
 typedef enum {
@@ -79,43 +83,61 @@ struct MC_VALUES {
 
     Q_PROPERTY(double v_in MEMBER v_in)
     Q_PROPERTY(double temp_mos MEMBER temp_mos)
+    Q_PROPERTY(double temp_mos2 MEMBER temp_mos2)
     Q_PROPERTY(double temp_motor MEMBER temp_motor)
+    Q_PROPERTY(double temp_motor2 MEMBER temp_motor2)
     Q_PROPERTY(double current_motor MEMBER current_motor)
+    Q_PROPERTY(double current_motor2 MEMBER current_motor2)
     Q_PROPERTY(double current_in MEMBER current_in)
     Q_PROPERTY(double id MEMBER id)
+    Q_PROPERTY(double id2 MEMBER id2)
     Q_PROPERTY(double iq MEMBER iq)
+    Q_PROPERTY(double iq2 MEMBER iq2)
     Q_PROPERTY(double rpm MEMBER rpm)
+    Q_PROPERTY(double rpm2 MEMBER rpm2)
     Q_PROPERTY(double duty_now MEMBER duty_now)
+    Q_PROPERTY(double duty_now2 MEMBER duty_now2)
     Q_PROPERTY(double amp_hours MEMBER amp_hours)
     Q_PROPERTY(double amp_hours_charged MEMBER amp_hours_charged)
     Q_PROPERTY(double watt_hours MEMBER watt_hours)
     Q_PROPERTY(double watt_hours_charged MEMBER watt_hours_charged)
     Q_PROPERTY(int tachometer MEMBER tachometer)
+    Q_PROPERTY(int tachometer2 MEMBER tachometer2)
     Q_PROPERTY(int tachometer_abs MEMBER tachometer_abs)
+    Q_PROPERTY(int tachometer_abs2 MEMBER tachometer_abs2)
     Q_PROPERTY(double position MEMBER position)
+    Q_PROPERTY(double position2 MEMBER position2)
     Q_PROPERTY(mc_fault_code fault_code MEMBER fault_code)
-    Q_PROPERTY(uint8_t vesc_id MEMBER vesc_id)
     Q_PROPERTY(QString fault_str MEMBER fault_str)
 
 public:
     double v_in;
     double temp_mos;
+    double temp_mos2;
     double temp_motor;
+    double temp_motor2;
     double current_motor;
+    double current_motor2;
     double current_in;
     double id;
+    double id2;
     double iq;
+    double iq2;
     double rpm;
+    double rpm2;
     double duty_now;
+    double duty_now2;
     double amp_hours;
     double amp_hours_charged;
     double watt_hours;
     double watt_hours_charged;
     int tachometer;
+    int tachometer2;
     int tachometer_abs;
+    int tachometer_abs2;
     double position;
+    double position2;
     mc_fault_code fault_code;
-    uint8_t vesc_id;
     QString fault_str;
 };
 

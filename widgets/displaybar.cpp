@@ -1,20 +1,20 @@
 /*
     Copyright 2016 - 2017 Benjamin Vedder	benjamin@vedder.se
 
-    This file is part of VESC Tool.
+    
 
-    VESC Tool is free software: you can redistribute it and/or modify
+    This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    VESC Tool is distributed in the hope that it will be useful,
+    This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program .  If not, see <http://www.gnu.org/licenses/>.
     */
 
 #include "displaybar.h"
@@ -46,7 +46,7 @@ void DisplayBar::paintEvent(QPaintEvent *event)
 
     painter.setBrush(QBrush(Qt::red));
     painter.fillRect(w / 2 - 1, 0, 2, h, Qt::darkRed);
-    painter.fillRect(0, h * f_disp - 1, w, 2, Qt::darkGreen);
+    painter.fillRect(0, h * f_disp - 1, w, 2, Qt::darkCyan);
 
     QPen pen;
     QFont font;
@@ -55,10 +55,10 @@ void DisplayBar::paintEvent(QPaintEvent *event)
     pen.setColor(Qt::white);
     font.setFamily("Monospace");
     font.setBold(true);
-    font.setPixelSize(h * f_val - 2);
+    font.setPixelSize(h * f_val - 8);
     painter.setPen(pen);
     painter.setFont(font);
-    painter.drawText(QRect(0, h * f_disp + 1, w / 2 - 2, h * f_val - 1),
+    painter.drawText(QRect(0, h * f_disp + 1, w / 2 - 2, h * f_val - 6),
                      Qt::AlignCenter, mName);
 
     // Value
@@ -79,7 +79,7 @@ void DisplayBar::paintEvent(QPaintEvent *event)
 
     if (fabs(valw) > 0.1) {
         if (valw >= 0.0) {
-            painter.setBrush(Qt::green);
+            painter.setBrush(Qt::cyan);
             painter.drawRect(xsp, 1, valw, valh);
         } else {
             painter.setBrush(Qt::red);

@@ -10,9 +10,7 @@
         <file>FwUpdate.qml</file>
         <file>FilePicker.qml</file>
         <file>ParamEditDouble.qml</file>
-        <file>ConfigPageMotor.qml</file>
         <file>ParamEditors.qml</file>
-        <file>ConfigPageApp.qml</file>
         <file>DoubleSpinBox.qml</file>
         <file>ParamEditInt.qml</file>
         <file>ParamEditEnum.qml</file>
@@ -25,8 +23,8 @@
         <file>DetectBldc.qml</file>
         <file>PpmMap.qml</file>
         <file>AdcMap.qml</file>
-        <file>NrfPair.qml</file>
-        <file>Controls.qml</file>
         <file>Terminal.qml</file>
+        <file>Logging.qml</file>
+        <file>ConfigPage.qml</file>
     </qresource>
 </RCC>

@@ -1,20 +1,20 @@
 /*
     Copyright 2018 Benjamin Vedder	benjamin@vedder.se
 
-    This file is part of VESC Tool.
+    
 
-    VESC Tool is free software: you can redistribute it and/or modify
+    This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    VESC Tool is distributed in the hope that it will be useful,
+    This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program .  If not, see <http://www.gnu.org/licenses/>.
     */
 
 import QtQuick 2.0
@@ -54,13 +54,14 @@ Item {
     Rectangle {
         id: rect
         anchors.fill: parent
-        color: "#4cbfbfbf"
-        radius: 10
-        border.color: "#4c000000"
+        color: "#00000000"
+        radius: 0
+        border.color: "#00cca3"
         border.width: 3
 
         ColumnLayout {
             id: column
+            spacing: 10
             anchors.fill: parent
             anchors.margins: 10
 
@@ -87,12 +88,13 @@ Item {
             }
 
             RowLayout {
+                spacing: 10
                 Layout.fillWidth: true
                 Button {
                     id: nowButton
                     Layout.fillWidth: true
                     Layout.preferredWidth: 500
-                    flat: true
+                    flat: false
                     text: "Current"
                     onClicked: {
                         params.setUpdateOnly(paramName)
@@ -104,8 +106,7 @@ Item {
                     id: defaultButton
                     Layout.fillWidth: true
                     Layout.preferredWidth: 500
-                    flat: true
-                    text: "Default"
+                    flat: false
                     onClicked: {
                         params.setUpdateOnly(paramName)
                         params.requestUpdateDefault()
@@ -116,7 +117,7 @@ Item {
                     id: helpButton
                     Layout.fillWidth: true
                     Layout.preferredWidth: 500
-                    flat: true
+                    flat: false
                     text: "Help"
                     onClicked: {
                         VescIf.emitMessageDialog(

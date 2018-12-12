@@ -1,20 +1,20 @@
 /*
-    Copyright 2017 - 2018 Benjamin Vedder	benjamin@vedder.se
+    Copyright 2017 Benjamin Vedder	benjamin@vedder.se
 
-    This file is part of VESC Tool.
 
-    VESC Tool is free software: you can redistribute it and/or modify
+
+    This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    VESC Tool is distributed in the hope that it will be useful,
+    This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program .  If not, see <http://www.gnu.org/licenses/>.
     */
 
 #include "utility.h"
@@ -27,7 +27,6 @@
 #include <QDebug>
 #include <QNetworkReply>
 #include <QMessageBox>
-#include <QFile>
 
 #ifdef Q_OS_ANDROID
 #include <QtAndroid>
@@ -114,7 +113,7 @@ bool Utility::autoconnectBlockingWithProgress(VescInterface *vesc, QWidget *pare
     if (!res) {
         vesc->emitMessageDialog(QObject::tr("Autoconnect"),
                                 QObject::tr("Could not autoconnect. Make sure that the USB cable is plugged in "
-                                            "and that the VESC is powered."),
+                                            "and that the FOCBOX is powered."),
                                 false);
     }
 
@@ -123,7 +122,10 @@ bool Utility::autoconnectBlockingWithProgress(VescInterface *vesc, QWidget *pare
 
 void Utility::checkVersion(VescInterface *vesc)
 {
-    QString version = QString::number(VT_VERSION);
+    if (vesc) {
+
+    }
+    /*QString version = QString::number(VT_VERSION);
     QUrl url("https://vesc-project.com/vesctool-version.html");
     QNetworkAccessManager manager;
     QNetworkRequest request(url);
@@ -140,20 +142,20 @@ void Utility::checkVersion(VescInterface *vesc)
 
         if (res.toDouble() > version.toDouble()) {
             if (vesc) {
-                vesc->emitStatusMessage("A new version of VESC Tool is available", true);
+                vesc->emitStatusMessage("A new version of This program is available", true);
                 vesc->emitMessageDialog(QObject::tr("New Software Available"),
-                                        QObject::tr("A new version of VESC Tool is available. Go to "
+                                        QObject::tr("A new version of This program is available. Go to "
                                                     "<a href=\"http://vesc-project.com/\">http://vesc-project.com/</a>"
                                                     " to download it and get all the latest features."),
                                         true);
             } else {
-                qDebug() << "A new version of VESC Tool is available. Go to vesc-project.com to download it "
+                qDebug() << "A new version of This program is available. Go to vesc-project.com to download it "
                             "and get all the latest features.";
             }
         }
     } else {
         qWarning() << res;
-    }
+    }*/
 }
 
 QString Utility::fwChangeLog()
@@ -178,23 +180,10 @@ QString Utility::vescToolChangeLog()
 
 QString Utility::aboutText()
 {
-    return tr("<b>VESC® Tool %1</b><br>"
-          #if defined(VER_ORIGINAL)
-              "Original Version<br>"
-          #elif defined(VER_PLATINUM)
-              "Platinum Version<br>"
-          #elif defined(VER_GOLD)
-              "Gold Version<br>"
-          #elif defined(VER_SILVER)
-              "Silver Version<br>"
-          #elif defined(VER_BRONZE)
-              "Bronze Version<br>"
-          #elif defined(VER_FREE)
-              "Free of Charge Version<br>"
-          #endif
-              "&copy; Benjamin Vedder 2016 - 2018<br>"
-              "<a href=\"mailto:benjamin@vedder.se\">benjamin@vedder.se</a><br>"
-              "<a href=\"https://vesc-project.com/\">https://vesc-project.com/</a>").
+    return tr("<b>FOCBOX® UI %1</b><br>"
+              "&copy; Jeffrey Friesen 2018<br>"
+              "<a href=\"mailto:jfriesen222@gmail.com\">jfriesen222@gmail.com</a><br>"
+              "<a href=\"https://enertionboards.com/\">https://enertionboards.com/</a>").
             arg(QString::number(VT_VERSION));
 }
 
@@ -215,14 +204,13 @@ bool Utility::requestFilePermission()
 #ifdef Q_OS_ANDROID
     // Note: The following should work on Qt 5.10
     // https://codereview.qt-project.org/#/c/199162/
-//    QtAndroid::PermissionResult r = QtAndroid::checkPermission("android.permission.WRITE_EXTERNAL_STORAGE");
-//    if(r == QtAndroid::PermissionResult::Denied) {
-//        QtAndroid::requestPermissionsSync( QStringList() << "android.permission.WRITE_EXTERNAL_STORAGE" );
-//        r = QtAndroid::checkPermission("android.permission.WRITE_EXTERNAL_STORAGE");
-//        if(r == QtAndroid::PermissionResult::Denied) {
-//            return false;
-//        }
-//    }
+    QtAndroid::PermissionResult r = QtAndroid::checkPermission("android.permission.WRITE_EXTERNAL_STORAGE");
+    if(r == QtAndroid::PermissionResult::Denied) {
+       QtAndroid::requestPermissionsSync( QStringList() << "android.permission.WRITE_EXTERNAL_STORAGE" );
+        r = QtAndroid::checkPermission("android.permission.WRITE_EXTERNAL_STORAGE");       if(r == QtAndroid::PermissionResult::Denied) {
+            return false;
+        }
+    }
     return true;
 #else
     return true;
