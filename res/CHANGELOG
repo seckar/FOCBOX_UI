@@ -5,6 +5,8 @@
 === 0.2 ===
 *added terminal page
 *added more settings
+*fixed BT menu so unity shows up first
+*changed default value of rpm conversion to match raptor 2.1
 
 === 0.3 ===
 *patched bugs on WriteConfig
@@ -37,5 +39,8 @@
 *Smart Switch Config
 *Launch Ready?
 
+=== 1.1 ===
+*New Unity FW
+*Motor Temp Config Refined
 
 

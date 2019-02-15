@@ -121,10 +121,9 @@ Item{
     property double minutesToOff: 10
     property bool pushToStart: true
 
-    property double motorTemp: 120
+    property double motorTemp: 135
     property bool motorTempEnable: true
-    property double motorBeta: 3380
-
+    property double motorBeta: 4100
 
     property Commands mCommands: VescIf.commands()
     property ConfigParams mAppConf: VescIf.appConfig()
@@ -214,8 +213,8 @@ Item{
         inductorText2.text = parseFloat(ind2*1e6).toFixed(0) + " uH"
 
         thermalSwitch.checked = motorTempEnable
-        slider9.value =  (motorBeta -2380.0)/2000.0
-        slider8.value = (motorTemp - 75.0)/50.0
+        slider9.value =  (motorBeta -2600.0)/3000.0
+        slider8.value = (motorTemp - 75.0)/60.0
 
         rectangle1.rotation = (table[1]<201.0) ? table[1]*360.0/200.0 : 180.0
         rectangle2.rotation = (table[2]<201.0) ? table[2]*360.0/200.0 : 180.0
@@ -322,8 +321,8 @@ Item{
         mMcConf.updateParamDouble("l_in_current_min",battCharge,item1)
         mMcConf.updateParamDouble("l_in_current_max",battCurrent,item1)
 
-        mMcConf.updateParamDouble("l_temp_motor_end", (motorTemp + 15), item1);
-        mMcConf.updateParamDouble("l_temp_motor_start", (motorTemp)*0.7, item1);
+        mMcConf.updateParamDouble("l_temp_motor_end", (motorTemp + 35), item1);
+        mMcConf.updateParamDouble("l_temp_motor_start", (motorTemp-35), item1);
         mMcConf.updateParamDouble("m_ntc_motor_beta", motorBeta, item1);
         mMcConf.updateParamBool("m_motor_temp_throttle_enable",motorTempEnable,item1)
 
@@ -2978,7 +2977,7 @@ Item{
 
                             Layout.preferredHeight: buttonReadCurrent.height*2/3
                             onValueChanged:  {
-                                motorTemp = Math.round(value*50) + 75
+                                motorTemp = Math.round(value * 60.0) + 75.0
 
                                 motorTempText.text = parseFloat(motorTemp).toFixed(0) + " \xB0 C"
 
@@ -3010,7 +3009,7 @@ Item{
                         }
                         Text {
                             id: motorBetaText
-                            text: qsTr("3380")
+                            text: qsTr("4100")
                             Layout.preferredWidth: uibox.symbolWidth1*1.6
                             Layout.preferredHeight: buttonReadCurrent.height*0.8
                             horizontalAlignment: Text.AlignHCenter
@@ -3029,7 +3028,7 @@ Item{
                             value: 0.5
                             Layout.preferredHeight: buttonReadCurrent.height*2/3
                             onValueChanged:  {
-                                motorBeta = Math.round(value*2000) +2380
+                                motorBeta = Math.round(value*3000) +2600
                                 motorBetaText.text = parseFloat(motorBeta).toFixed(0)
                             }
                         }
@@ -3179,7 +3178,7 @@ Item{
             lambda2 = mMcConf.getParamDouble("foc_motor_flux_linkage2")
 
 
-            motorTemp = mMcConf.getParamDouble("l_temp_motor_end") - 15
+            motorTemp = mMcConf.getParamDouble("l_temp_motor_end") - 35
             motorBeta = mMcConf.getParamDouble("m_ntc_motor_beta")
             motorTempEnable = mMcConf.getParamBool("m_motor_temp_throttle_enable")
 

@@ -733,7 +733,7 @@ Item {
                             //Layout.fillWidth: true
                             // Layout.preferredHeight: 0.6*uibox.middleColumnWidth1
                             from: 0
-                            value: 140
+                            value: 100
                             to: 100 * 10
                             stepSize: 2
                             // font.pixelSize: uibox.textSize1

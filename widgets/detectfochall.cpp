@@ -99,25 +99,6 @@ void DetectFocHall::setVesc(VescInterface *vesc)
 
 void DetectFocHall::focHallTableReceived(QVector<int> hall_table, int res)
 {
-    if (res != 0) {
-        mVesc->emitStatusMessage(tr("Bad FOC Hall Detection Result Received"), false);
-        ui->hall0Box->setValue(hall_table.at(0));
-        ui->hall1Box->setValue(hall_table.at(1));
-        ui->hall2Box->setValue(hall_table.at(2));
-        ui->hall3Box->setValue(hall_table.at(3));
-        ui->hall4Box->setValue(hall_table.at(4));
-        ui->hall5Box->setValue(hall_table.at(5));
-        ui->hall6Box->setValue(hall_table.at(6));
-        ui->hall7Box->setValue(hall_table.at(7));
-        ui->hall0Box_2->setValue(hall_table.at(8));
-        ui->hall1Box_2->setValue(hall_table.at(9));
-        ui->hall2Box_2->setValue(hall_table.at(10));
-        ui->hall3Box_2->setValue(hall_table.at(11));
-        ui->hall4Box_2->setValue(hall_table.at(12));
-        ui->hall5Box_2->setValue(hall_table.at(13));
-        ui->hall6Box_2->setValue(hall_table.at(14));
-        ui->hall7Box_2->setValue(hall_table.at(15));
-    } else {
         mVesc->emitStatusMessage(tr("FOC Hall Result Received"), true);
         ui->hall0Box->setValue(hall_table.at(0));
         ui->hall1Box->setValue(hall_table.at(1));
@@ -135,5 +116,4 @@ void DetectFocHall::focHallTableReceived(QVector<int> hall_table, int res)
         ui->hall5Box_2->setValue(hall_table.at(13));
         ui->hall6Box_2->setValue(hall_table.at(14));
         ui->hall7Box_2->setValue(hall_table.at(15));
-    }
 }

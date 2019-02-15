@@ -180,10 +180,15 @@ QString Utility::vescToolChangeLog()
 
 QString Utility::aboutText()
 {
-    return tr("<b>FOCBOX® UI %1</b><br>"
-              "&copy; Jeffrey Friesen 2018<br>"
-              "<a href=\"mailto:jfriesen222@gmail.com\">jfriesen222@gmail.com</a><br>"
-              "<a href=\"https://enertionboards.com/\">https://enertionboards.com/</a>").
+    return tr("<b>FOCBOX® UI %1.1</b><br>"
+              "Jeffrey Friesen 2018<br>"
+              "<a href=\"mailto:Jeff@enertionboards.com\">Jeff@enertionboards.com</a><br>"
+              "<a href=\"https://enertionboards.com/\">https://enertionboards.com/</a> <br><br>"
+              "This Application is based on the VESC®-Tool<br>"
+              "&copy; Benjamin Vedder 2016-2018<br>"
+              "<a href=\"mailto:benjamin@vedder.se\">benjamin@vedder.se</a><br>"
+              "<a href=\"https://vesc-project.com/\">https://vesc-project.com/</a><br>"
+              ).
             arg(QString::number(VT_VERSION));
 }
 

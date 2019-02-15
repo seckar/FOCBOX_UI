@@ -43,6 +43,14 @@ ConnectBleForm {
     disconnectButton.onClicked: {
         VescIf.disconnectPort()
     }
+    connectUSBButton.onWindowChanged: {
+        if(Qt.platform.os === "android"){
+            connectUSBButton.visible = false
+        }else{
+            connectUSBButton.visible = true
+        }
+    }
+
     connectUSBButton.onClicked: {
         VescIf.autoconnect()
     }
@@ -100,7 +108,7 @@ ConnectBleForm {
 
             for (var name in devs) {
                 var name2 = name + " [" + devs[name] + "]"
-                if (name.indexOf("UNITY") !== -1 || name.indexOf("VESC")) {
+                if (name.indexOf("UNITY") !== -1 ) {
                     bleItems.insert(0, { key: name2, value: devs[name] })
                 } else {
                     bleItems.append({ key: name2, value: devs[name] })

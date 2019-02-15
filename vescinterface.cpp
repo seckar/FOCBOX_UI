@@ -675,8 +675,7 @@ void VescInterface::fwVersionReceived(int major, int minor, QString hw, QByteArr
             mCommands->setLimitedMode(true);
             updateFwRx(true);
             if (!wasReceived) {
-                emit messageDialog(tr("Warning"), tr("The connected FOCBOX has too old firmware. Since the"
-                                                    " connected FOCBOX has firmware with bootloader support, it can be"
+                emit messageDialog(tr("Warning"), tr("The connected FOCBOX has too old firmware. It can be"
                                                     " updated from the Firmware page."
                                                     " Until then, limited communication mode will be used where only the"
                                                     " firmware can be changed."), false, false);
@@ -692,12 +691,12 @@ void VescInterface::fwVersionReceived(int major, int minor, QString hw, QByteArr
         }
     } else {
         updateFwRx(true);
-       /* if (fw_connected < highest_supported) {
+        if (fw_connected < highest_supported) {
             if (!wasReceived) {
                 emit messageDialog(tr("Warning"), tr("The connected FOCBOX has compatible, but old"
-                                                    " firmware. It is recommended that you update it."), false, false);
+                                                    " firmware. To update, navigate to the firmware tab and click upload on the default page. Remember you will need to re-run Guided Setup after the firmware update."), false, false);
             }
-        }*/
+        }
 
         QString fwStr;
         fwStr.sprintf("FOCBOX Firmware Version %d.%d", major, minor);
